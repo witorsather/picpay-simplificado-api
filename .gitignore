@@ -1,0 +1,28 @@
+# Arquivos do IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Arquivos de compilação
+/target/
+*.class
+*.jar
+*.war
+
+# Arquivos de pacote
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Outros arquivos e diretórios ignorados
+.DS_Store
+/.mvn
+mvnw
+mvnw.cmd
+*.pem
+*.jks
+.vscode
+
