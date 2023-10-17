@@ -1,5 +1,6 @@
 package com.picpaysimplificadoapi.domain.user;
 
+import com.picpaysimplificadoapi.dtos.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,4 +27,14 @@ public class User {
     private BigDecimal balance; // saldo da conta, seria melhor se fosse uma tabela separada com relacionamento OneToMany já que um usuário pode ter mais de uma conta e um saldo
     @Enumerated(EnumType.STRING) // se eu não passar por padrão ele irá usar integer o que é ruim de visualizar no banco
     private UserType userType; // tipo de usuário comum ou logista
+
+    public User(UserDTO userDTO) {
+        this.firstName = userDTO.firstName();
+        this.lastName = userDTO.lastName();
+        this.document = userDTO.document();
+        this.email = userDTO.email();
+        this.password = userDTO.password();
+        this.balance = userDTO.balance();
+        this.userType = userDTO.userType();
+    }
 }
