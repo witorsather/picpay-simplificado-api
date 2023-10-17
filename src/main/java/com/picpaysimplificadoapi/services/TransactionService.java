@@ -26,6 +26,9 @@ public class TransactionService {
     @Autowired
     private RestTemplate restTemplate; // RestTemplate é uma classe que o spring nos oferece, ela é responsável por faver comunicação http entre serviço,  pode fazer através delas chamadas http tipo get, put
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Value("{$api.authorize.transaction.url}")
     String apiAuthorizeTransactionUrl;
 
@@ -33,9 +36,10 @@ public class TransactionService {
      * Cria uma nova transação com base nas informações fornecidas no objeto TransactionDTO.
      *
      * @param transaction O objeto TransactionDTO contendo detalhes da transação.
+     * @return A transação criada e persistida com sucesso.
      * @throws Exception Se ocorrer algum erro durante o processamento da transação.
      */
-    public void createTransaction(TransactionDTO transaction) throws Exception {
+    public Transaction createTransaction(TransactionDTO transaction) throws Exception {
         // Pega o remetente e o destinatário da transação
         User sender = this.userService.findUserById(transaction.senderId());
         User receiver = this.userService.findUserById(transaction.receiverId());
@@ -65,6 +69,22 @@ public class TransactionService {
         this.transactionRepository.save(newTransaction);
         this.userService.saveUser(sender);
         this.userService.saveUser(receiver);
+
+        // Notifica o remetente e o destinatário sobre a transação
+        /* Api de notificação fora do ar
+        String senderMessage = String.format(
+                "Você enviou R$ %.2f para %s. Seu novo saldo é R$ %.2f.",
+                transaction.value(), receiver.getFirstName() + " " + receiver.getLastName(), sender.getBalance()
+        );
+        String receiverMessage = String.format(
+                "Você recebeu R$ %.2f de %s. Seu novo saldo é R$ %.2f.",
+                transaction.value(), sender.getFirstName() + " " + sender.getLastName(), receiver.getBalance()
+        );
+
+        this.notificationService.sendNotification(sender, senderMessage);
+        this.notificationService.sendNotification(receiver, receiverMessage);
+         */
+        return newTransaction;
     }
 
 
@@ -72,15 +92,20 @@ public class TransactionService {
      * Autoriza uma transação para um determinado usuário.
      *
      * @param sender O usuário remetente da transação.
-     * @param value O valor da transação a ser autorizado.
+     * @param value  O valor da transação a ser autorizado.
      * @return Verdadeiro se a transação for autorizada, falso caso contrário.
      */
     public boolean authorizeTransaction(User sender, BigDecimal value) {
+        return true;
+        /* api fora do ar
+
         ResponseEntity<Map> authorizationResponse = restTemplate.getForEntity(apiAuthorizeTransactionUrl, Map.class);
 
         if (authorizationResponse.getStatusCode() == HttpStatus.OK) {
             String message = (String) authorizationResponse.getBody().get("message");
             return "Autorizado".equalsIgnoreCase(message);
         } else return false;
+        
+         */
     }
 }
