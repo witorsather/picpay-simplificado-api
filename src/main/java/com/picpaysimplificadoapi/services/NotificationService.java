@@ -24,7 +24,7 @@ public class NotificationService {
      * @param message A mensagem a ser incluída na notificação.
      * @throws Exception Se ocorrer um erro ao enviar a notificação ou se o serviço de notificação estiver fora do ar.
      */
-    private void sendNotification(User user, String message) throws Exception {
+    public void sendNotification(User user, String message) throws Exception {
         String email = user.getEmail();
         NotificationDTO notificationRequest = new NotificationDTO(email, message);
 
