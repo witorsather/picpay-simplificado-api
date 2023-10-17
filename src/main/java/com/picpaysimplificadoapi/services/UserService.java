@@ -2,11 +2,13 @@ package com.picpaysimplificadoapi.services;
 
 import com.picpaysimplificadoapi.domain.user.User;
 import com.picpaysimplificadoapi.domain.user.UserType;
+import com.picpaysimplificadoapi.dtos.UserDTO;
 import com.picpaysimplificadoapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 // indica pro spring que é uma classe de serviço o que o ajuda a depois fazer as injeções em outras classes de forma correta
@@ -17,7 +19,7 @@ public class UserService {
 
     /**
      * Valida uma transação entre um remetente e um valor desejado.
-     *
+     * <p>
      * Este método verifica se o tipo de usuário do remetente não é um Lojista
      * e se o saldo do remetente é suficiente para a transação desejada.
      *
@@ -52,7 +54,7 @@ public class UserService {
     public User findUserById(Long id) throws Exception {
         return this.userRepository.findUserById(id).orElseThrow(() -> new Exception("Usuário não encontrado"));
     }
-    
+
     /**
      * Salva um usuário no repositório.
      *
@@ -60,6 +62,31 @@ public class UserService {
      */
     public void saveUser(User user) {
         this.userRepository.save(user);  // só pra persistir as alterações(instância User passada no parâmetro) no usuário
+    }  // após atualizar o balance saldo do usuário precisa persistir no banco de dados, pois o balance é um atributo do User
+
+    /**
+     * Cria um novo usuário com base nos dados fornecidos por um objeto UserDTO.
+     *
+     * @param data O objeto UserDTO contendo os dados do novo usuário.
+     * @return O usuário recém-criado.
+     */
+    public User createUser(UserDTO data) {
+        // Cria uma nova instância de usuário com base nos dados do UserDTO
+        User newUser = new User(data);
+
+        // Salva o novo usuário no sistema
+        this.saveUser(newUser);
+
+        // Retorna o usuário criado
+        return newUser; // o único problema é que vou retornar um usuário com id nulo, se for problema isso eu deveria criar meu próprio método de save em vez de usar o saveUser
     }
-    // após atualizar o balance saldo do usuário precisa persistir no banco de dados, pois o balance é um atributo do User
+
+    /**
+     * Recupera uma lista de todos os usuários cadastrados.
+     *
+     * @return Uma lista contendo todos os usuários registrados no sistema.
+     */
+    public List<User> getAllUsers() {
+        return this.userRepository.findAll();
+    }
 }
